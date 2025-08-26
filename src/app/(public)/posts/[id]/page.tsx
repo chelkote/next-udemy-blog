@@ -16,7 +16,7 @@ export default async function PostPage({ params }: Params) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-3xl mx-auto">
+      <Card className="max-w-xl mx-auto bg-gray-900 border-gray-900">
         {post.topImage && (
           <div className="relative w-full h-64 lg:h-96">
             <Image
@@ -38,9 +38,11 @@ export default async function PostPage({ params }: Params) {
               })}
             </time>
           </div>
-          <CardTitle className="text-3xl font-bold">{post.title}</CardTitle>
+          <CardTitle className="text-3xl font-bold text-white">
+            {post.title}
+          </CardTitle>
         </CardHeader>
-        <CardContent>{post.content}</CardContent>
+        <CardContent className="text-white">{post.content}</CardContent>
       </Card>
     </div>
   );
