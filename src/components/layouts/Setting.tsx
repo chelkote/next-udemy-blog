@@ -1,4 +1,5 @@
 import { signOut } from "@/auth"; // ログアウト処理
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +13,7 @@ import { handleLogout } from "@/actions/auth";
 export default function Setting({ session }: { session: Session }) {
   const handleLogout = async () => {
     "use server";
-    await signOut(); // CSRF対応済み
+    await signOut({ redirectTo: "/login" }); // CSRF対応済み
   };
   return (
     <DropdownMenu>
