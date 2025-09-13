@@ -9,10 +9,12 @@ import "highlight.js/styles/github.css"; // コードハイライト用のスタ
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import rehypeHighlight from "rehype-highlight";
 
 export default function CreatePostPage() {
   const [content, setContent] = useState(""); // 記事の文章
   const [contentLength, setContentLength] = useState(0); // 文字数
+  const [preview, setPreview] = useState(false); // プレビュー
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -20,7 +22,6 @@ export default function CreatePostPage() {
     setContentLength(value.length);
   };
 
-  const [preview, setPreview] = useState(false); // プレビュー
   return (
     <div className="container mx-auto mt-10">
       <h1 className="text-2xl font-bold mb-4">新規記事投稿(Markdown対応)</h1>
@@ -33,6 +34,10 @@ export default function CreatePostPage() {
             name="title"
             placeholder="タイトルを入力してください"
           />
+        </div>
+        <div>
+          <Label htmlFor="topImage">トップ画像</Label>
+          <Input type="file" id="topImage" accept="image/*" name="topImage" />
         </div>
         <div>
           <Label htmlFor="content">内容(Markdown)</Label>
@@ -49,6 +54,33 @@ export default function CreatePostPage() {
         {/* <div className="text-right text-sm text-gray-500 mt-1">
           文字数: {contentLength}
         </div> */}
+        <div>
+          <Button
+            type="button"
+            className="bg-gray-500 text-white"
+            onClick={() => setPreview(!preview)}
+          >
+            {preview ? "プレビューを閉じる" : "プレビューを表示する"}
+          </Button>
+        </div>
+        {preview && (
+          <div className="border p-4 bg-gray-50 prose max-w-none">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeHighlight]}
+              skipHtml={false} // HTMLスキップを無効化
+              unwrapDisallowed={true} // Markdownの改行を解釈
+            >
+              {content}
+            </ReactMarkdown>
+          </div>
+        )}
+        <Button
+          type="submit"
+          className="bg-gray-500 text-white px-4 py-2 rounded"
+        >
+          投稿する
+        </Button>
       </form>
     </div>
   );
