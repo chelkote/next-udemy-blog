@@ -1,15 +1,27 @@
-import { getPost } from "@/lib/post";
+import { getOwnPost } from "@/lib/ownPost";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { auth } from "@/auth";
+// import ReactMarkdown from "react-markdown";
+// import remarkGfm from "remark-gfm";
+// import "highlight.js/styles/github.css"; // コードハイライト用のスタイル
+// import rehypeHighlight from "rehype-highlight";
 
 type Params = { params: Promise<{ id: string }> }; // urlの情報はparamsで渡ってくる
 
-export default async function PostPage({ params }: Params) {
+export default async function showPage({ params }: Params) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!session?.user?.email || !userId) {
+    throw new Error("不正なリクエストです");
+  }
+
   const { id } = await params; // paramsはPromise型で定義しつつawaitで非同期処理
-  const post = await getPost(id); // DBからid指定して情報取得
+  const post = await getOwnPost(userId, id); // DBからid指定して情報取得
   if (!post) {
     notFound();
   }
@@ -38,11 +50,23 @@ export default async function PostPage({ params }: Params) {
               })}
             </time>
           </div>
-          <CardTitle className="text-3xl font-bold text-white ">
+          <CardTitle className="text-3xl font-bold text-white">
             {post.title}
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-white">{post.content}</CardContent>
+        <CardContent className="text-white">
+          {post.content}
+          {/* <div className=" prose max-w-none">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeHighlight]}
+              skipHtml={false} // HTMLスキップを無効化
+              unwrapDisallowed={true} // Markdownの改行を解釈
+            >
+              {post.content}
+            </ReactMarkdown>
+          </div> */}
+        </CardContent>
       </Card>
     </div>
   );

@@ -13,7 +13,7 @@ import { handleLogout } from "@/actions/auth";
 export default function Setting({ session }: { session: Session }) {
   const handleLogout = async () => {
     "use server";
-    await signOut({ redirectTo: "/login" }); // CSRF対応済み
+    await signOut({ redirectTo: "/" }); // CSRF対応済み
   };
   return (
     <DropdownMenu>
